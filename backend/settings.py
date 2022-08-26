@@ -97,7 +97,7 @@ DATABASES = {
         'NAME': 'NITRO30022-ITEMSDATABASE',
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': f"mongodb+srv://admin:{os.getenv('MONGO_DB_PASSWORD')}@nitro30022-itemsdatabas.ebukojw.mongodb.net/?retryWrites=true&w=majority"
+            'host': f"mongodb+srv://{os.getenv('MONGO_DB_USERNAME')}:{os.getenv('MONGO_DB_PASSWORD')}@nitro30022-itemsdatabas.ebukojw.mongodb.net/?retryWrites=true&w=majority"
         }
     }
 }
