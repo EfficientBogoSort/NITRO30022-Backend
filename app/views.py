@@ -5,6 +5,12 @@ from .serializers import FileSerializer, UserSerializer, CollectionSerializer
 
 @api_view(['GET', 'POST'])
 def files(request, format=None):
+    """
+    PARAMS:
+    request: request object
+    RETURN: response object
+    DESCRIPTION: This function is used to get all files or create a new file.
+    """
     if request.method == 'GET':
         files = File.objects.all()
         serializer = FileSerializer(files, many=True)
@@ -16,6 +22,7 @@ def files(request, format=None):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
+
 
 @api_view(['GET', 'POST'])
 def collections(request, format=None):
