@@ -19,8 +19,8 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
     path('api/', include('app.urls')),
+    path('api/users/', include('users.urls')),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
