@@ -13,6 +13,8 @@ class User(AbstractUser):
     dob = models.DateTimeField()
     email = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=50, blank=True)
+
+    # token used for authentication
     @property
     def token(self):
         token = jwt.encode({'username': self.username, 'exp': datetime.utcnow() + timedelta(hours=TOKEN_DURATION)},

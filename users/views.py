@@ -24,13 +24,15 @@ class RegisterView(APIView):
 
 
 class LogInView(APIView):
+
     def post(self, request):
         username = request.data.get('username', None)
         password = request.data.get('password', None)
+
+        # find a user with a matching username and check if the password is correct
         user = User.objects.filter(username=username).first()
         if user is None or not user.check_password(password):
             return Response(status=401)
-
+        # the user authenticated, generate a JWT token for the user, which is done by the serializer
         serializer = LogInSerializer(user)
-
         return Response(serializer.data, status=200)
