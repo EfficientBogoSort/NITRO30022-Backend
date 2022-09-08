@@ -4,6 +4,9 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+    """
+    placeholder description
+    """
 
     dependencies = [
         ('app', '0001_initial'),
