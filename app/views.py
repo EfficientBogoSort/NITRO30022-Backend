@@ -1,7 +1,9 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import File, User, Collection
-from .serializers import FileSerializer, UserSerializer, CollectionSerializer
+from .models import File, Collection
+from .serializers import FileSerializer, CollectionSerializer
+
+from rest_framework.parsers import JSONParser
 
 @api_view(['GET', 'POST'])
 def files(request, format=None):

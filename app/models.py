@@ -5,12 +5,7 @@ class File(models.Model):
     submit_date = models.DateTimeField(auto_now_add=True)
     file_src = models.FileField()
 
-class User(models.Model):
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    dob = models.DateTimeField()
-    email = models.CharField(max_length=100)
-    creation_date = models.DateTimeField(auto_now_add=True)
+
 
 # Create your models here.
 class Collection(models.Model):
