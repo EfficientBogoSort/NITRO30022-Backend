@@ -12,7 +12,16 @@ TOKEN_DURATION = 5
 
 
 class RegisterView(APIView):
+    """
+    Contains request methods for the register view
+    """
     def post(self, request):
+        """
+        Parameters:
+            request: HttpRequest - contains signup data such as name, last name, username, password and email to create
+            a new user in the database
+        Return: returns a fresh JWT token for the user as well as the status code
+        """
         # create a new user and add it to the db
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -27,8 +36,16 @@ class RegisterView(APIView):
 
 
 class LogInView(APIView):
-
+    """
+    Contains request methods for the log in view
+    """
     def post(self, request):
+        """
+        Parameters:
+            request: HttpRequest - contains the username and password that the user inputted
+        Return: if the user successfully authenticated, it will return the login serialized data, which includes
+        username and a new JWT token. If the user failed to authenticate, it will return a status code 401
+        """
         username = request.data.get('username', None)
         password = request.data.get('password', None)
 
@@ -42,6 +59,13 @@ class LogInView(APIView):
 
 @api_view(['POST'])
 def get_user(request):
+    """
+    Parameters:
+        request: HttpRequest - contains the token used to retrieve the user from the database
+    Return:
+        Response: contains data in response to the request (such as user information, or JWT token)as well as
+        the status code
+    """
     token = request.data.get('authToken')
     # returns 404 for when the token is not in the request, the username is not in the token, the token expired
     # or the user is not in the database
