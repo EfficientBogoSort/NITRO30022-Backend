@@ -16,7 +16,7 @@ django.setup()
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'nitrus'
+project = 'Nitrus'
 copyright = '2022, Sebastian Tobin-Couzens, Isaac Parsons, Surya Venkatesh, Pablo Li, Peh Ni Tan'
 author = 'Sebastian Tobin-Couzens, Isaac Parsons, Surya Venkatesh, Pablo Li, Peh Ni Tan'
 
