@@ -1,4 +1,9 @@
 .venv/
-backend/__pycache__/
 .env
 .idea
+.DS_Store
+*.pyc
+
+docs/_build/*
+
+

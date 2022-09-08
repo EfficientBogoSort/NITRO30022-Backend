@@ -1,3 +1,7 @@
+"""
+models.py description here
+"""
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import jwt
@@ -22,6 +26,7 @@ class User(AbstractUser):
     def token(self):
         """
         Parameters: None
+        
         Return: returns a SHA256 encoded JWT token which contains the username, and the expiry time
         """
         token = jwt.encode({'username': self.username, 'exp': datetime.utcnow() + timedelta(hours=TOKEN_DURATION)},
