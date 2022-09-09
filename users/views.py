@@ -1,3 +1,7 @@
+"""
+views.py description here
+"""
+
 from rest_framework.response import Response
 from .serializers import UserSerializer, LogInSerializer
 from rest_framework.views import APIView
@@ -43,8 +47,9 @@ class LogInView(APIView):
         """
         Parameters:
             request: HttpRequest - contains the username and password that the user inputted
-        Return: if the user successfully authenticated, it will return the login serialized data, which includes
-        username and a new JWT token. If the user failed to authenticate, it will return a status code 401
+        Return: 
+            if the user successfully authenticated, it will return the login serialized data, which includes 
+            username and a new JWT token. If the user failed to authenticate, it will return a status code 401
         """
         username = request.data.get('username', None)
         password = request.data.get('password', None)

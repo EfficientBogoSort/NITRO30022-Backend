@@ -1,3 +1,7 @@
+"""
+serializers.py description here
+"""
+
 from .models import User
 from rest_framework import serializers
 
@@ -22,7 +26,8 @@ class UserSerializer(serializers.ModelSerializer):
         Parameters:
             validated_data - Dictionary: contains data such as first and last name, username, password and email to
             create a user
-        Return: return the newly create user as a User Object
+        Return: 
+            return the newly create user as a User Object
         """
         password = validated_data.pop('password', None)
         instance = self.Meta.model(**validated_data)
