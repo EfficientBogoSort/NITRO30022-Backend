@@ -1,0 +1,9 @@
+.git
+*.md
+.gitignore
+.venv/
+backend/__pycache__/
+users/__pycache__/
+files/__pycache__/
+.env
+.idea
