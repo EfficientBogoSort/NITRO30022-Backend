@@ -64,6 +64,7 @@ class LogInView(APIView):
 
 @api_view(['POST'])
 def get_user(request):
+
     """
     Parameters:
         request: HttpRequest - contains the token used to retrieve the user from the database
@@ -74,10 +75,12 @@ def get_user(request):
     token = request.data.get('authToken')
     # returns 404 for when the token is not in the request, the username is not in the token, the token expired
     # or the user is not in the database
+
     if not token:
         return Response(status=404)
     decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
-    if 'username' not in decoded_token or decoded_token['exp'] > datetime.utcnow():
+
+    if 'username' not in decoded_token or decoded_token['exp'] > int(datetime.utcnow().strftime("%Y%m%d%H%M%S")):
         return Response(404)
     user = User.objects.filter(username=decoded_token['username']).first()
     if user is None:
