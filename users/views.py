@@ -10,15 +10,14 @@ from rest_framework.decorators import api_view
 import jwt
 from django.conf import settings
 from datetime import datetime
-# Create your views here.
-
-TOKEN_DURATION = 5
+from .__init__ import *
 
 
 class RegisterView(APIView):
     """
     Contains request methods for the register view
     """
+
     def post(self, request):
         """
         Parameters:
@@ -26,6 +25,10 @@ class RegisterView(APIView):
             a new user in the database
         Return: returns a fresh JWT token for the user as well as the status code
         """
+        username = request.data.get('username', None)
+        user = User.objects.filter(username=username).first()
+        if user:
+            return Response(status=INVALID_DATA_CODE)
         # create a new user and add it to the db
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -36,13 +39,14 @@ class RegisterView(APIView):
         user = User.objects.filter(username=username).first()
         user_serializer = LogInSerializer(user)
 
-        return Response(user_serializer.data, status=200)
+        return Response(user_serializer.data, status=OK_STAT_CODE)
 
 
 class LogInView(APIView):
     """
     Contains request methods for the log in view
     """
+
     def post(self, request):
         """
         Parameters:
@@ -57,10 +61,11 @@ class LogInView(APIView):
         # verify user exists
         user = User.objects.filter(username=username).first()
         if user is None or not user.check_password(password):
-            return Response(status=401)
-        # the serializer craetes a JWT token for the user to use
+            return Response(status=INVALID_DATA_CODE)
+        # the serializer creates a JWT token for the user to use
         user_serialized_data = LogInSerializer(user)
-        return Response(user_serialized_data.data, status=200)
+        return Response(user_serialized_data.data, status=OK_STAT_CODE)
+
 
 @api_view(['POST'])
 def get_user(request):
@@ -72,15 +77,17 @@ def get_user(request):
         the status code
     """
     token = request.data.get('authToken')
-    # returns 404 for when the token is not in the request, the username is not in the token, the token expired
-    # or the user is not in the database
     if not token:
-        return Response(status=404)
-    decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
-    if 'username' not in decoded_token or decoded_token['exp'] > datetime.utcnow():
-        return Response(404)
+        return Response(status=BAD_REQ_CODE)
+
+    # check if the token is still valid (within its lifetime)
+    try:
+        decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
+    except jwt.exceptions.ExpiredSignatureError:
+        return Response(status=INVALID_DATA_CODE)
+
     user = User.objects.filter(username=decoded_token['username']).first()
     if user is None:
-        return Response(status=404)
+        return Response(status=NOT_FOUND)
     user_serialized_data = UserSerializer(user)
-    return Response(user_serialized_data.data, status=200)
+    return Response(user_serialized_data.data, status=OK_STAT_CODE)
