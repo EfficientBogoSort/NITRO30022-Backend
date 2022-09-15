@@ -28,7 +28,7 @@ class TestView(TestCase):
                                                     'last_name': self.dummy_last_name,
                                                     'email': self.dummy_email})
         self.dummy_jwt = a.json()['token']
-
+        print(a.json().items())
         self.login_url = reverse(LOG_IN_URL)
         self.signup_url = reverse(SIGN_UP_URL)
         self.get_me_url = reverse(GET_ME_URL)
