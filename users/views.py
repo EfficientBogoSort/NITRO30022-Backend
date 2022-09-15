@@ -12,10 +12,6 @@ from django.conf import settings
 from datetime import datetime
 from .__init__ import *
 
-# Create your views here.
-
-TOKEN_DURATION = 5
-
 
 class RegisterView(APIView):
     """
@@ -43,7 +39,7 @@ class RegisterView(APIView):
         user = User.objects.filter(username=username).first()
         user_serializer = LogInSerializer(user)
 
-        return Response(user_serializer.data, status=200)
+        return Response(user_serializer.data, status=OK_STAT_CODE)
 
 
 class LogInView(APIView):
@@ -68,7 +64,7 @@ class LogInView(APIView):
             return Response(status=INVALID_DATA_CODE)
         # the serializer creates a JWT token for the user to use
         user_serialized_data = LogInSerializer(user)
-        return Response(user_serialized_data.data, status=200)
+        return Response(user_serialized_data.data, status=OK_STAT_CODE)
 
 
 @api_view(['POST'])
@@ -94,4 +90,4 @@ def get_user(request):
     if user is None:
         return Response(status=NOT_FOUND)
     user_serialized_data = UserSerializer(user)
-    return Response(user_serialized_data.data, status=200)
+    return Response(user_serialized_data.data, status=OK_STAT_CODE)
