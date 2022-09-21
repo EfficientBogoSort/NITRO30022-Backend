@@ -1,4 +1,14 @@
 .venv/
+<<<<<<< HEAD
 backend/__pycache__/
 app/__pycache__/
 .env
+=======
+.env
+.idea
+.DS_Store
+*.pyc
+
+docs/_build/doctrees/*
+docs/_build/html/.buildinfo
+>>>>>>> 4e3d87465099d47482b20ffba088c2356b95ae8a
