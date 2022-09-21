@@ -13,3 +13,8 @@ files/__pycache__/
 .docker/
 .ssh/
 .viminfo
+.DS_Store
+*.pyc
+
+docs/_build/doctrees/*
+docs/_build/html/.buildinfo
