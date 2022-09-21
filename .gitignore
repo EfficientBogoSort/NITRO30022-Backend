@@ -10,3 +10,13 @@ app/__pycache__/
 
 docs/_build/doctrees/*
 docs/_build/html/.buildinfo
+
+.bash_history
+.bash_logout
+.bash_profile
+.bashrc
+.cache/
+.docker-compose.yml.swp
+.docker/
+.ssh/
+.viminfo
