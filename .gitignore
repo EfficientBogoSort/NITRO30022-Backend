@@ -2,5 +2,11 @@
 backend/__pycache__/
 users/__pycache__/
 files/__pycache__/
+app/__pycache__/
 .env
 .idea
+.DS_Store
+*.pyc
+
+docs/_build/doctrees/*
+docs/_build/html/.buildinfo

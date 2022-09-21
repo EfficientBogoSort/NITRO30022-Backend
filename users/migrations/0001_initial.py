@@ -7,6 +7,9 @@ import django.utils.timezone
 
 
 class Migration(migrations.Migration):
+    """
+    placeholder description
+    """
 
     initial = True
 
