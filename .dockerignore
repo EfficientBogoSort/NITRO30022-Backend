@@ -6,6 +6,7 @@ backend/__pycache__/
 users/__pycache__/
 files/__pycache__/
 */__pycache__/
+**/__pycache__/
 .env
 .idea
 .DS_Store
