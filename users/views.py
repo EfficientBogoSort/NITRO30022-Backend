@@ -1,7 +1,3 @@
-"""
-views.py description here
-"""
-
 from rest_framework.response import Response
 from .serializers import UserSerializer, LogInSerializer
 from rest_framework.views import APIView
