@@ -2,6 +2,7 @@ from django.test import SimpleTestCase
 from django.urls import reverse, resolve
 from ..views import *
 from ..__init__ import *
+
 class TestUrls(SimpleTestCase):
     def test_log_in_resolved(self):
         url = reverse(LOG_IN_URL)

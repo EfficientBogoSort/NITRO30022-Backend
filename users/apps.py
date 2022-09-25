@@ -1,8 +1,3 @@
-"""
-apps.py description here
-"""
-
-
 from django.apps import AppConfig
 
 
