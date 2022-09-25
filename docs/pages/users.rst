@@ -7,52 +7,38 @@ Views
 -----
 
 .. automodule:: users.views
-
-    .. autoclass:: RegisterView
-        :members:
-
-    .. autoclass:: LogInView
-        :members:
+    :members:
 
 Models
 ------
 
 .. automodule:: users.models
-
-    .. autoclass:: users.models.User
-        :members:
+    :members:
 
 Serializers
 -----------
 
 .. automodule:: users.serializers
-
-    .. autoclass:: users.serializers.UserSerializer
-        :members:
+    :members:
 
 Apps
 ----
 
 .. automodule:: users.apps
-
-    .. autoclass:: users.apps.UsersConfig
-        :members:
+    :members:
 
 Tests
 -----
 
 .. 
     automodule:: users.tests.test_models
+        :members:
 
 .. automodule:: users.tests.test_urls
-
-    .. autoclass:: users.tests.test_urls.TestUrls
-        :members:
+    :members:
 
 .. automodule:: users.tests.test_views
-
-    .. autoclass:: users.tests.test_views.TestView
-        :members:
+    :members:
 
 
 

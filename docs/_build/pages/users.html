@@ -16,7 +16,7 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="App" href="files.html" />
+    <link rel="next" title="Files" href="files.html" />
     <link rel="prev" title="Welcome to Nitrus’s documentation!" href="../index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -40,6 +40,26 @@
 <section id="module-users.views">
 <span id="views"></span><h2>Views<a class="headerlink" href="#module-users.views" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="users.views.LogInView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">users.views.</span></span><span class="sig-name descname"><span class="pre">LogInView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#users.views.LogInView" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains request methods for the log in view</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="users.views.LogInView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#users.views.LogInView.post" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> – HttpRequest - contains the username and password that the user inputted</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>if the user successfully authenticated, it will return the login serialized data, which includes
+username and a new JWT token. If the user failed to authenticate, it will return a status code 401</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="users.views.RegisterView">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">users.views.</span></span><span class="sig-name descname"><span class="pre">RegisterView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#users.views.RegisterView" title="Permalink to this definition">¶</a></dt>
 <dd><p>Contains request methods for the register view</p>
@@ -59,24 +79,21 @@
 
 </dd></dl>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="users.views.LogInView">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">users.views.</span></span><span class="sig-name descname"><span class="pre">LogInView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#users.views.LogInView" title="Permalink to this definition">¶</a></dt>
-<dd><p>Contains request methods for the log in view</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="users.views.LogInView.post">
-<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#users.views.LogInView.post" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="users.views.get_user">
+<span class="sig-prename descclassname"><span class="pre">users.views.</span></span><span class="sig-name descname"><span class="pre">get_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#users.views.get_user" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>request</strong> – HttpRequest - contains the username and password that the user inputted</p>
+<dd class="field-odd"><p><strong>request</strong> – HttpRequest - contains the token used to retrieve the user from the database</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>if the user successfully authenticated, it will return the login serialized data, which includes
-username and a new JWT token. If the user failed to authenticate, it will return a status code 401</p>
+<dd class="field-even"><p>contains data in response to the request (such as user information, or JWT token)as well as
+the status code</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Response</p>
 </dd>
 </dl>
-</dd></dl>
-
 </dd></dl>
 
 </section>
@@ -113,6 +130,24 @@ username and a new JWT token. If the user failed to authenticate, it will return
 </section>
 <section id="module-users.serializers">
 <span id="serializers"></span><h2>Serializers<a class="headerlink" href="#module-users.serializers" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="users.serializers.LogInSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">users.serializers.</span></span><span class="sig-name descname"><span class="pre">LogInSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#users.serializers.LogInSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class used to serialize login data</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="users.serializers.LogInSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="headerlink" href="#users.serializers.LogInSerializer.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contains meta data about the serializer</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="users.serializers.LogInSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#users.serializers.LogInSerializer.Meta.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#users.models.User" title="users.models.User"><code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="users.serializers.UserSerializer">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">users.serializers.</span></span><span class="sig-name descname"><span class="pre">UserSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#users.serializers.UserSerializer" title="Permalink to this definition">¶</a></dt>
@@ -204,8 +239,8 @@ username and a new JWT token. If the user failed to authenticate, it will return
 <li class="toctree-l2"><a class="reference internal" href="#tests">Tests</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="files.html">App</a></li>
-<li class="toctree-l1"><a class="reference internal" href="collection.html">App Migrations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="files.html">Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collection.html">Collections</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backend.html">Backend</a></li>
 </ul>
 
@@ -214,7 +249,7 @@ username and a new JWT token. If the user failed to authenticate, it will return
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="../index.html" title="previous chapter">Welcome to Nitrus’s documentation!</a></li>
-      <li>Next: <a href="files.html" title="next chapter">App</a></li>
+      <li>Next: <a href="files.html" title="next chapter">Files</a></li>
   </ul></li>
 </ul>
 </div>

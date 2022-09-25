@@ -7,33 +7,25 @@ Views
 -----
 
 .. automodule:: files.views
-
-    .. autoclass:: FileViewset
-        :members:
+    :members:
 
 Models
 ------
 
 .. automodule:: files.models
-
-    .. autoclass:: files.models.File
-        :members:
+    :members:
 
 Serializers
 -----------
 
 .. automodule:: files.serializers
-
-    .. autoclass:: files.serializers.FileSerializer
-        :members:
+    :members:
 
 Apps
 ----
 
 .. automodule:: files.apps
-
-    .. autoclass:: files.apps.FilesConfig
-        :members:
+    :members:
 
 Tests
 -----
