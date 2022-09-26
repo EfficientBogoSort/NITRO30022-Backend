@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'files',
     'rest_framework.authtoken',
     'corsheaders',
+    'collection',
 ]
 
 MIDDLEWARE = [

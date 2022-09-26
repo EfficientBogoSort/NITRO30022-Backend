@@ -19,6 +19,7 @@ python-snappy==0.6.1
 pytz==2022.2.1
 s3transfer==0.6.0
 six==1.16.0
+sphinx==5.1.1
 sqlparse==0.2.4
 tzdata==2022.2
 urllib3==1.26.12

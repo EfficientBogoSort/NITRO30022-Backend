@@ -1,8 +1,8 @@
 from django.db import models
  
 class File(models.Model):
-    title = models.CharField(max_length=30)
-    document = models.FileField(max_length=30)
+    title = models.CharField(max_length=30, primary_key=True)
+    document = models.CharField(max_length=300)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
  

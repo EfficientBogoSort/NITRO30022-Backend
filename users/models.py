@@ -1,7 +1,3 @@
-"""
-models.py description here
-"""
-
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import jwt
@@ -20,7 +16,7 @@ class User(AbstractUser):
     dob = models.DateTimeField()
     email = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=50, blank=True)
-
+    username = models.CharField(max_length= 50, primary_key=True)
     # token used for authentication
     @property
     def token(self):
