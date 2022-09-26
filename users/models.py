@@ -11,9 +11,6 @@ class User(AbstractUser):
     """
     Class used to represent a user by django
     """
-    first_name = models.CharField(max_length=50, blank=True)
-    last_name = models.CharField(max_length=50, blank=True)
-    dob = models.DateTimeField()
     email = models.CharField(max_length=100, unique=True)
     password = models.CharField(max_length=50, blank=True)
     username = models.CharField(max_length= 50, primary_key=True)
