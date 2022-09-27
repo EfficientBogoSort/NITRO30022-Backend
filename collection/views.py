@@ -1,3 +1,5 @@
+import json
+
 from collection.models import Collection
 from rest_framework import viewsets, parsers
 from collection.serializers import CollectionSerlializer
@@ -11,68 +13,86 @@ from django.conf import settings
 class CollectionViewSet(viewsets.ViewSet):
 
     def list(self, request):
-
         # authenticates user
-        request_status = authenticate_token(request, 'GET')
-        if request_status == BAD_REQ_CODE or request_status == INVALID_DATA_CODE:
-            return Response(status=request_status)
-
-        username = get_username(request)
-        collections = Collection.objects.filter(owner=username)
+        token = decode_token(get_token(request, 'GET'))
+        if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
+            return Response(status=token)
+        username = token['username']
+        user = User.objects.filter(username=username).first()
+        if user is None:
+            return Response(status=INVALID_DATA_CODE)
+        collections = Collection.objects.filter(owner=user)
         serializer = CollectionSerlializer(collections, many=True)
         return Response(serializer.data, status=OK_STAT_CODE)
 
     def retrieve(self, request, pk):
 
         # authenticates user
-        request_status = authenticate_token(request, 'GET')
-        if request_status == BAD_REQ_CODE or request_status == INVALID_DATA_CODE:
-            return Response(status=request_status)
-
+        token = decode_token(get_token(request, 'GET'))
+        if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
+            return Response(status=token)
         colln = Collection.objects.filter(name=pk).first()
-        if not colln:
+        if colln is None:
             return Response(status=NOT_FOUND)
         serializer = CollectionSerlializer(colln)
         return Response(serializer.data, status=OK_STAT_CODE)
 
     def create(self, request):
-
         # authenticates user
-        request_status = authenticate_token(request, 'POST')
-        if request_status == BAD_REQ_CODE or request_status == INVALID_DATA_CODE:
-            return Response(status=request_status)
+        token = decode_token(get_token(request, 'POST'))
+        if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
+            return Response(status=token)
 
-        username = get_username(request)
+        username = token['username']
         name = request.data.get('name')
+
+        # collection with that name already exists
         colln = Collection.objects.filter(name=name)
         if colln:
             return Response(status=INVALID_DATA_CODE)
-        request.data['owner'] = User.objects.filter(username=username).first().username
-        request.data['num_items'] = 0
-        request.data['size'] = 0
-        serializer = CollectionSerlializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        user = User.objects.filter(username=username).first()
+
+        # request must have an owner (user)
+        if user is None:
+            return Response(status=INVALID_DATA_CODE)
+        req_data_copy = request.data.dict()
+        req_data_copy['owner'] = user.username
+        req_data_copy['num_items'] = 0
+        req_data_copy['size'] = 0
+        serializer = CollectionSerlializer(data=req_data_copy)
+        serializer.is_valid()
+
         serializer.save()
         return Response(status=OK_STAT_CODE)
 
+    def destroy(self, request, pk):
+        colln = Collection.objects.filter(name=pk)
+        if colln is None:
+            return Response(status=INVALID_DATA_CODE)
+        colln.delete()
+        return Response(status=OK_STAT_CODE)
 
-def authenticate_token(request, req_type):
-    token = get_token(request, req_type)
-    if not token:
-        return BAD_REQ_CODE
-    try:
-        decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
-    except Exception:
-        return INVALID_DATA_CODE
+    def update(self, request, pk):
+        new_name = request.data.get('name')
+        colln = Collection.objects.filter(name=pk)
+        if colln is None:
+            return Response(status=INVALID_DATA_CODE)
+        colln.update(name=new_name)
+        return Response(status=OK_STAT_CODE)
 
 
 def get_token(request, req_type):
-    if req_type == 'GET':
+    if req_type in ['GET', 'DELETE']:
         return request.GET.get('authToken', None)
-    elif req_type == 'POST':
+    elif req_type in ['POST', 'PUT']:
         return request.data.get('authToken', None)
 
 
-def get_username(request):
-    token = request.data.get('authToken')
-    return jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')['username']
+def decode_token(token):
+    if token is None:
+        return BAD_REQ_CODE
+    try:
+        d_token = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
+        return d_token
+    except Exception:
+        return INVALID_DATA_CODE

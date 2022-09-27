@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
         Contains meta data about the serializer
         """
         model = User
-        fields = ['first_name', 'last_name', 'email', 'username', 'password']
+        fields = ['email', 'username', 'password']
         # do not include the password during the serialization
         extra_kwargs = {
             'password': {'write_only': True}
