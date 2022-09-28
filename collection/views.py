@@ -33,7 +33,14 @@ class CollectionViewSet(viewsets.ModelViewSet):
         token = decode_token(get_token(request))
         if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
             return Response(status=token)
-        colln = Collection.objects.filter(name=pk).first()
+        # print(token)
+        username = token['username']
+        user = User.objects.filter(username=username).first()
+        if user is None:
+            return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
+
+        colln = Collection.objects.filter(name=pk, owner=user.username).first()
+        
         if colln is None:
             return Response(status=NOT_FOUND)
         serializer = CollectionSerializer(colln)
@@ -70,15 +77,38 @@ class CollectionViewSet(viewsets.ModelViewSet):
         return Response(status=INVALID_DATA_CODE, data={'message': 'Invalid data'})
 
     def destroy(self, request, pk):
-        colln = Collection.objects.filter(name=pk)
+        # authenticates user
+        token = decode_token(get_token(request))
+        if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
+            return Response(status=token)
+        # print(token)
+        username = token['username']
+        user = User.objects.filter(username=username).first()
+        if user is None:
+            return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
+
+        colln = Collection.objects.filter(name=pk, owner=user.username).first()
+        
         if colln is None:
             return Response(status=INVALID_DATA_CODE)
         colln.delete()
         return Response(status=OK_STAT_CODE)
 
-    def update(self, request, pk):
+    def update(self, request, pk, **kwargs):
+        # authenticates user
+        token = decode_token(get_token(request))
+        if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
+            return Response(status=token)
+        # print(token)
+        username = token['username']
+        user = User.objects.filter(username=username).first()
+        if user is None:
+            return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
+
+        colln = Collection.objects.filter(name=pk, owner=user.username).first()
+        
         new_name = request.data.get('name')
-        colln = Collection.objects.filter(name=pk)
+        
         if colln is None:
             return Response(status=INVALID_DATA_CODE)
         colln.update(name=new_name)
