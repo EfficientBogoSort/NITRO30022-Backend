@@ -33,7 +33,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         token = decode_token(get_token(request))
         if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
             return Response(status=token)
-        # print(token)
+        
         username = token['username']
         user = User.objects.filter(username=username).first()
         if user is None:
@@ -106,7 +106,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
             return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
 
         colln = Collection.objects.filter(name=pk, owner=user.username).first()
-        
+
         new_name = request.data.get('name')
         
         if colln is None:
