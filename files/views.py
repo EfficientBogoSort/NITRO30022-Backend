@@ -52,7 +52,7 @@ class FileViewset(viewsets.ModelViewSet):
         # authenticates user
         token = decode_token(get_token(request))
         if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
-            return Response(status=token)
+            return Response(status=token, data={'message': 'Invalid token'})
 
         username = token['username']
         name = request.data.get('colln')
@@ -62,7 +62,7 @@ class FileViewset(viewsets.ModelViewSet):
         if colln:
             # file title already exists
             if colln.allFiles.filter(title=request.data.get('title')):
-                return Response(status=INVALID_DATA_CODE)
+                return Response(status=INVALID_DATA_CODE, data={'message': 'File with that title already exists'})
         else:
             return Response(status=INVALID_DATA_CODE, data={'message': 'Collection does not exist'})
         
@@ -70,7 +70,7 @@ class FileViewset(viewsets.ModelViewSet):
 
         # request must have an owner (user)
         if user is None:
-            return Response(status=INVALID_DATA_CODE)
+            return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
 
         request.data['owner'] = user.username
         
@@ -82,7 +82,7 @@ class FileViewset(viewsets.ModelViewSet):
             colln.save()
             return Response(serializer.data, status=OK_STAT_CODE)
 
-        return Response(status=INVALID_DATA_CODE)
+        return Response(status=INVALID_DATA_CODE, data={'message': 'Invalid data'})
     
     def destroy(self, request, pk):
         # authenticates user
