@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from collection.models import Collection
 
-class CollectionSerlializer(serializers.ModelSerializer):
+class CollectionSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Collection

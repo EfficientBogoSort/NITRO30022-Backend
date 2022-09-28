@@ -6,6 +6,6 @@ class Collection(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     num_items = models.IntegerField()
     size = models.IntegerField()
-    files = models.ManyToManyField(File, blank=True)
+    allFiles = models.ManyToManyField(File, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
