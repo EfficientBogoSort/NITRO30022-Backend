@@ -58,6 +58,9 @@ class FileViewset(viewsets.ModelViewSet):
         username = token['username']
         name = request.data.get('colln')
 
+        print(request.data)
+        print(username, name)
+
         # collection with that name already exists
         colln = Collection.objects.filter(name=name).first()
         if colln:
