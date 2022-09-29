@@ -12,7 +12,8 @@ from django.conf import settings
 
 class CollectionViewSet(viewsets.ModelViewSet):
     serializer_class = CollectionSerializer
-
+    search_fields = ['name']
+    
     def list(self, request):
         # authenticates user
         token = decode_token(get_token(request))
