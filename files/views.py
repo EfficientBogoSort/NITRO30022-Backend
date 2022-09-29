@@ -13,6 +13,7 @@ class FileViewset(viewsets.ModelViewSet):
     serializer_class = FileSerializer
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
     http_method_names = ['get', 'post', 'patch', 'delete']
+    search_fields = ['title']
 
     def list(self, request):
         # authenticates user
