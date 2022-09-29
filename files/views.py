@@ -58,8 +58,8 @@ class FileViewset(viewsets.ModelViewSet):
         username = token['username']
         name = request.data.get('colln')
 
-        print(request.data)
-        print(username, name)
+        if name is None:
+            return Response(status=INVALID_DATA_CODE, data={'message': 'Collection name not provided'})
 
         # collection with that name already exists
         colln = Collection.objects.filter(name=name).first()
