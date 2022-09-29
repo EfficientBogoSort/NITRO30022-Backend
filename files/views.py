@@ -5,6 +5,7 @@ from .serializers import FileSerializer
 from collection.views import get_token, decode_token
 from rest_framework.response import Response
 from users.models import User
+from django.http import QueryDict
 from .__init__ import *
 
 class FileViewset(viewsets.ModelViewSet):
@@ -72,10 +73,12 @@ class FileViewset(viewsets.ModelViewSet):
         if user is None:
             return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
 
+        if isinstance(request.data, QueryDict):
+            request.data._mutable = True
         request.data['owner'] = user.username
         
         serializer = FileSerializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             colln.num_items += 1
             colln.size = 0
             colln.allFiles.add(serializer.save())
