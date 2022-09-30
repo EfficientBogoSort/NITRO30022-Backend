@@ -1,6 +1,6 @@
 name: Backend Testing 
 on:
-  push:
+  repository_dispatch:
     branches:
       - '*'
 jobs:
