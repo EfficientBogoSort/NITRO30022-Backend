@@ -87,3 +87,5 @@ def get_user(request):
         return Response(status=NOT_FOUND)
     user_serialized_data = UserSerializer(user)
     return Response(user_serialized_data.data, status=OK_STAT_CODE)
+
+
