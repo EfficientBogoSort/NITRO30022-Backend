@@ -48,7 +48,7 @@ class TestView(TestCase):
 
     def test_get_all_non_existent_user(self):
         response = self.client.get(self.collections_list, **self.fake_token_header)
-        self.assertEquals(response.status_code,NOT_FOUND)
+        self.assertEquals(response.status_code, NOT_FOUND)
 
     # Tests for creating a new collection
     def test_create_existing_colln(self):
@@ -60,7 +60,7 @@ class TestView(TestCase):
         self.assertEquals(response.status_code, NOT_FOUND)
 
     def test_create_colln_invalid_token(self):
-        response = self.client.post(self.collections_list,**self.invalid_token_header)
+        response = self.client.post(self.collections_list, **self.invalid_token_header)
         self.assertEquals(response.status_code, INVALID_DATA_CODE)
 
     # Tests for retrieving a collection
@@ -117,13 +117,13 @@ class TestView(TestCase):
         response = self.client.delete(request, **self.fake_token_header)
         self.assertEquals(response.status_code, NOT_FOUND)
 
-
     # Tests for the update endpoint
     def test_updt_success(self):
         request = reverse(COLLECTION_URL + '-detail', kwargs={'pk': self.dummy_collection_name})
-        response = self.client.put(request, {'name': self.updated_colln_name}, content_type='application/json', 
+        response = self.client.put(request, {'name': self.updated_colln_name}, content_type='application/json',
                                    **self.token_header)
         self.assertEquals(OK_STAT_CODE, response.status_code)
+
     def test_updt_missing_token(self):
         # pk choice does not matter here
         request = reverse(COLLECTION_URL + '-detail', kwargs={'pk': 'aa'})
