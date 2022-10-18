@@ -21,7 +21,10 @@ class CollectionViewSet(viewsets.ModelViewSet):
         queryset = Collection.objects.filter(owner=response)
         # print(queryset)
         serializer = CollectionSerializer(queryset, many=True)
-        return Response(serializer.data, status=OK_STAT_CODE)
+        file_data = User.objects.filter(id__in=serializer.data.get('allFiles', None))
+        new_data = {'file_data': file_data}
+        new_data.update(serializer.data)
+        return Response(new_data, status=OK_STAT_CODE)
 
     def retrieve(self, request, pk):
         verification, response = verify_user(request)
