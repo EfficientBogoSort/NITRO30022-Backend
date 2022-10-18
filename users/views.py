@@ -87,3 +87,20 @@ def get_user(request):
         return Response(status=NOT_FOUND)
     user_serialized_data = UserSerializer(user)
     return Response(user_serialized_data.data, status=OK_STAT_CODE)
+
+@api_view(['PUT'])
+def update_user_info(request):
+    token = request.data.get('authToken')
+    if not token:
+        return Response(status=BAD_REQ_CODE)
+    try:
+        decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
+    except jwt.exceptions.ExpiredSignatureError:
+        return Response(status=INVALID_DATA_CODE)
+    username = decoded_token.get('username', None)
+    user = User.objects.filter(username=username).first()
+    if user is None:
+        return Response(status=NOT_FOUND)
+    user.username = username
+    user.save()
+    return Response(status=OK_STAT_CODE)
