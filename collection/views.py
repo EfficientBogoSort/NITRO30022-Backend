@@ -35,8 +35,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         serializer = CollectionSerializer(colln)
         files_data = list(File.objects.filter(id__in=serializer.data['allFiles']))
         full_data = {'files_data': files_data}
-        full_data.update(files_data)
-        print(full_data)
+        full_data.update(full_data)
         return Response(files_data, status=OK_STAT_CODE)
 
     def create(self, request):
