@@ -9,6 +9,7 @@ import jwt
 from .__init__ import *
 from django.conf import settings
 from files.models import File
+from files.serializers import FileSerializer
 
 class CollectionViewSet(viewsets.ModelViewSet):
     serializer_class = CollectionSerializer
@@ -33,10 +34,11 @@ class CollectionViewSet(viewsets.ModelViewSet):
         if colln is None:
             return Response(status=NOT_FOUND)
         serializer = CollectionSerializer(colln)
-        files_data = list(File.objects.filter(id__in=serializer.data['allFiles']))
-        full_data = {'files_data': files_data}
-        full_data.update(full_data)
-        return Response(files_data, status=OK_STAT_CODE)
+        files_data = File.objects.filter(id__in=serializer.data['allFiles'])
+        serialized_file_data = FileSerializer(files_data, many=True)
+        full_data = {'files_data': serialized_file_data.data}
+        full_data.update(serializer.data)
+        return Response(full_data, status=OK_STAT_CODE)
 
     def create(self, request):
         verification, response = verify_user(request)
