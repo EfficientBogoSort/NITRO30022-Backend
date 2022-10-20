@@ -51,11 +51,11 @@ class CollectionViewSet(viewsets.ModelViewSet):
         if colln:
             return Response(status=INVALID_DATA_CODE)
         
-        request.data._mutable = True
-        request.data['owner'] = response
-        request.data['num_items'] = 0
-        request.data['size'] = 0
-        serializer = CollectionSerializer(data=request.data)
+        request_data_copy = request.data.copy()
+        request_data_copy['owner'] = response
+        request_data_copy['num_items'] = 0
+        request_data_copy['size'] = 0
+        serializer = CollectionSerializer(data=request_data_copy)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=OK_STAT_CODE)
