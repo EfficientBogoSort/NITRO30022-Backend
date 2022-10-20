@@ -83,6 +83,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
             return Response(status=NOT_FOUND)
         colln.name = new_name
         colln.save()
+        colln.delete()
         return Response(status=OK_STAT_CODE)
 
 def verify_user(request):
