@@ -2,7 +2,7 @@ name: Backend Testing
 on:
   push:
     branches:
-      - [ prod ]
+      - [ prod, snapshot_week12progress ]
 jobs:
   build:
     runs-on: ubuntu-latest
