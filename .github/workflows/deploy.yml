@@ -2,7 +2,9 @@ name: CI/CD
 
 on:
   push:
-    branches: [ prod, snapshot_week12progress ]
+    branches: 
+      - prod
+      - snapshot_week12progress
 
 jobs:
   Deploy:
