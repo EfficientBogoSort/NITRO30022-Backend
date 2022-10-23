@@ -4,7 +4,6 @@ on:
   push:
     branches: 
       - prod
-      - snapshot_week12progress
 
 jobs:
   Deploy:
