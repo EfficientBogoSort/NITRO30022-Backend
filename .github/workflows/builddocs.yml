@@ -2,7 +2,7 @@ name: Building Backend Documentation
 on:
   push:
     branches:
-      - '*'
+      - [ prod ]
 jobs:
   build:
     runs-on: ubuntu-latest
