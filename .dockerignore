@@ -1,12 +1,19 @@
+.git
+*.md
+.gitignore
 .venv/
 backend/__pycache__/
 users/__pycache__/
 files/__pycache__/
+*/__pycache__/
 **/__pycache__/
 .env
 .idea
 .DS_Store
 *.pyc
+
+docs/_build/doctrees/*
+docs/_build/html/.buildinfo
 
 .bash_history
 .bash_logout
