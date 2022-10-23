@@ -2,7 +2,7 @@ name: CI/CD
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ prod ]
 
 jobs:
   Deploy:
@@ -22,7 +22,7 @@ jobs:
           
             # Now we have got the access of EC2 and we will start the deploy .
             cd NITRO30022-Backend/ &&
-            git checkout develop &&
+            git checkout prod &&
             git pull &&
             docker-compose down -v &&
             docker-compose up -d --build
