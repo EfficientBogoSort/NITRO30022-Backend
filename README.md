@@ -12,6 +12,34 @@ Sebastian Tobin-Couzens
 - Run ```docker-compose run web``` in the project directory
 - You can then access the server from port 8081
 
+# Required fields in the .env file
+- For the server to successfully run, you need to have a .env file in the home directory with the following fields:
+  - MONGODB_USERNAME: The MongoDB username you used for your database
+  - MONGO_DB_PASSWORD: The password you set for the database
+  - MONGO_DB_HOST: The host of the MongoDB server.
+  
+  If you are planning to run it together with Docker, then also include these fields:
+  - AWS_ACCESS_KEY_ID 
+  - AWS_SECRET_ACCESS_KEY
+  - AWS_STORAGE_BUCKET_NAME
+  - AWS_S3_SIGNATURE_VERSION 
+  - AWS_S3_REGION_NAME
+  
+  
+# Instructions for running the backend server
+- From the home directory run:
+``` python manage.py runserver <optional port number>```
+- You can either specify a port number for the server to run on
+- Or you can leave it blank, which by defaults runs it on port 3000
+- Make sure you have all modules in the requirement.txt file installed
+- Make sure you have python 3 installed (Preferably above version 3.7)
+
+# Instructions for running the testing
+- From the home directory run:
+``` python manage.py test <optional specific moule>```
+- You can either specify an app to test
+- Or leave it blank which runs the test files located in each test folder in each app
+
 # Instructions for building documentation with Sphinx
 
 Build documentation with:
