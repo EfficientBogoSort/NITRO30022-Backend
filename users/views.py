@@ -73,12 +73,17 @@ def get_user(request):
         Response: contains data in response to the request (such as user information, or JWT token)as well as
         the status code
     """
-    verification, response = verify_user(request)
-    if not verification:
-        return response
-    username = response
+    token = request.data.get('authToken')
+    if not token:
+        return Response(status=BAD_REQ_CODE)
 
-    user = User.objects.filter(username=username).first()
+    # check if the token is still valid (within its lifetime)
+    try:
+        decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
+    except jwt.exceptions.ExpiredSignatureError:
+        return Response(status=INVALID_DATA_CODE)
+
+    user = User.objects.filter(username=decoded_token['username']).first()
     if user is None:
         return Response(status=NOT_FOUND)
     user_serialized_data = UserSerializer(user)
