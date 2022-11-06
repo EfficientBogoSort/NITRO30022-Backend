@@ -7,6 +7,7 @@ import jwt
 from django.conf import settings
 from datetime import datetime
 from .__init__ import *
+from collection.views import verify_user
 
 
 class RegisterView(APIView):
@@ -72,17 +73,12 @@ def get_user(request):
         Response: contains data in response to the request (such as user information, or JWT token)as well as
         the status code
     """
-    token = request.data.get('authToken')
-    if not token:
-        return Response(status=BAD_REQ_CODE)
+    verification, response = verify_user(request)
+    if not verification:
+        return response
+    username = response
 
-    # check if the token is still valid (within its lifetime)
-    try:
-        decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
-    except jwt.exceptions.ExpiredSignatureError:
-        return Response(status=INVALID_DATA_CODE)
-
-    user = User.objects.filter(username=decoded_token['username']).first()
+    user = User.objects.filter(username=username).first()
     if user is None:
         return Response(status=NOT_FOUND)
     user_serialized_data = UserSerializer(user)
@@ -90,17 +86,23 @@ def get_user(request):
 
 @api_view(['PUT'])
 def update_user_info(request):
-    token = request.data.get('authToken')
-    if not token:
-        return Response(status=BAD_REQ_CODE)
-    try:
-        decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
-    except jwt.exceptions.ExpiredSignatureError:
-        return Response(status=INVALID_DATA_CODE)
-    username = decoded_token.get('username', None)
+    verification, response = verify_user(request)
+    if not verification:
+        return response
+    username = response
+
     user = User.objects.filter(username=username).first()
     if user is None:
         return Response(status=NOT_FOUND)
-    user.username = username
-    user.save()
-    return Response(status=OK_STAT_CODE)
+
+    new_email = request.data.get('email', None)
+    new_password = request.data.get('password', None)
+
+    serializer = UserSerializer(instance=user, data=request.data, partial=True)
+    if serializer.is_valid():
+        user.email = new_email
+        user.set_password(new_password)
+        user.save()
+        return Response(serializer.data, status=OK_STAT_CODE)
+
+    return Response(status=INVALID_DATA_CODE)

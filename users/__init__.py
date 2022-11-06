@@ -1,6 +1,7 @@
 SIGN_UP_URL = 'signup'
 LOG_IN_URL = 'login'
 GET_ME_URL = 'getMe'
+UPDATE_ME_URL = 'updateUser'
 OK_STAT_CODE = 200
 NOT_FOUND = 404
 INVALID_DATA_CODE = 401
