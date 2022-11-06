@@ -41,13 +41,16 @@ class CollectionViewSet(viewsets.ModelViewSet):
         return Response(full_data, status=OK_STAT_CODE)
 
     def create(self, request):
+        # response is either an error status code if something is wrong
+        # or the user's username
         verification, response = verify_user(request)
         if not verification:
             return response
-        name = request.data.get('name')
+        collnName = request.data.get('name')
 
         # collection with that name already exists
-        colln = Collection.objects.filter(name=name)
+        colln = Collection.objects.filter(name=collnName, owner_id=response)
+
         if colln:
             return Response(status=INVALID_DATA_CODE)
         
