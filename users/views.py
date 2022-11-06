@@ -103,11 +103,16 @@ def update_user_info(request):
     new_email = request.data.get('email', None)
     new_password = request.data.get('password', None)
 
-    serializer = UserSerializer(instance=user, data=request.data, partial=True)
-    if serializer.is_valid():
+    if new_email is not None:
         user.email = new_email
+    
+    if new_password is not None:
         user.set_password(new_password)
-        user.save()
-        return Response(serializer.data, status=OK_STAT_CODE)
+    
+    if new_email is None and new_password is None:
+        return Response(status=INVALID_DATA_CODE)
+    
+    user.save()
+    return Response(request.data, status=OK_STAT_CODE)
 
-    return Response(status=INVALID_DATA_CODE)
+    
