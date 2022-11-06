@@ -7,6 +7,13 @@ Surya Venkatesh
 Pablo Li
 Sebastian Tobin-Couzens
 
+# Installing Dependencies
+
+Install python 3.7 or newer version
+
+To install module dependencies, run:
+```pip install -r requirements.txt```
+
 # Instructions for Docker
 - Need to have docker installed (including docker-compose)
 - Run ```docker-compose run web``` in the project directory
@@ -25,22 +32,25 @@ Sebastian Tobin-Couzens
   - AWS_S3_SIGNATURE_VERSION 
   - AWS_S3_REGION_NAME
   
-  
 # Instructions for running the backend server
 - From the home directory run:
 ``` python manage.py runserver <optional port number>```
 - You can either specify a port number for the server to run on
-- Or you can leave it blank, which by defaults runs it on port 3000
+- If left blank, port defaults to 3000
 - Make sure you have all modules in the requirement.txt file installed
 - Make sure you have python 3 installed (Preferably above version 3.7)
 
 # Instructions for running the testing
 - From the home directory run:
-``` python manage.py test <optional specific moule>```
+``` python manage.py test <optional specific module>```
 - You can either specify an app to test
 - Or leave it blank which runs the test files located in each test folder in each app
 
 # Instructions for building documentation with Sphinx
+
+Create documentation .rst source files in /docs/pages/
+
+Set page hierarchy in /docs/index.rst
 
 Build documentation with:
 
