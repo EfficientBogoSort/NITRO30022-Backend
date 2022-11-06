@@ -16,7 +16,7 @@ Sebastian Tobin-Couzens
 
 # Instructions for Docker
 - Need to have docker installed (including docker-compose)
-- Run `docker-compose run web` in the project directory
+- Run `docker-compose up` in the project directory
 - You can then access the server from port 8081
 
 # Required fields in the .env file
