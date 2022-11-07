@@ -7,12 +7,13 @@ from rest_framework.response import Response
 from users.models import User
 from django.http import QueryDict
 from .__init__ import *
+from rest_framework import filters
 
 class FileViewset(viewsets.ModelViewSet):
-    # queryset = File.objects.all()
     serializer_class = FileSerializer
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
     http_method_names = ['get', 'post', 'patch', 'delete']
+    filter_backends = [filters.SearchFilter]
     search_fields = ['title']
 
     def list(self, request):
@@ -27,9 +28,15 @@ class FileViewset(viewsets.ModelViewSet):
             return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
         
         queryset = File.objects.filter(owner=user)
+        queryset = self.filter_queryset(queryset)
         # print(queryset)
         serializer = FileSerializer(queryset, many=True)
         return Response(serializer.data, status=OK_STAT_CODE)
+    
+    def filter_queryset(self, queryset):
+        for backend in list(self.filter_backends):
+            queryset = backend().filter_queryset(self.request, queryset, self)
+        return queryset
 
     def retrieve(self, request, pk):
         # authenticates user

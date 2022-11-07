@@ -10,9 +10,11 @@ from .__init__ import *
 from django.conf import settings
 from files.models import File
 from files.serializers import FileSerializer
+from rest_framework import filters
 
 class CollectionViewSet(viewsets.ModelViewSet):
     serializer_class = CollectionSerializer
+    filter_backends = [filters.SearchFilter]
     search_fields = ['name']
     
     def list(self, request):
@@ -20,9 +22,15 @@ class CollectionViewSet(viewsets.ModelViewSet):
         if not verification:
             return response
         queryset = Collection.objects.filter(owner=response)
+        queryset = self.filter_queryset(queryset)
         # print(queryset)
         serializer = CollectionSerializer(queryset, many=True)
         return Response(serializer.data, status=OK_STAT_CODE)
+    
+    def filter_queryset(self, queryset):
+        for backend in list(self.filter_backends):
+            queryset = backend().filter_queryset(self.request, queryset, self)
+        return queryset
 
     def retrieve(self, request, pk):
         verification, response = verify_user(request)
