@@ -1,8 +1,10 @@
 from django.db import models
 from users.models import User
 from files.models import File
+import uuid
 class Collection(models.Model):
-    name = models.CharField(max_length=30, primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    name = models.CharField(max_length=30)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     num_items = models.IntegerField()
     size = models.IntegerField()
