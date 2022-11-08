@@ -21,7 +21,19 @@ class CollectionViewSet(viewsets.ModelViewSet):
         verification, response = verify_user(request)
         if not verification:
             return response
-        queryset = Collection.objects.filter(owner=response)
+        
+        friend_name = request.data.get('friend')
+
+        if friend_name is not None:
+            user = User.objects.filter(username=response).first()
+            friend = User.objects.filter(username=friend_name).first()
+            if friend in user.friends.all():
+                queryset = Collection.objects.filter(owner=friend_name, private="false")
+            else:
+                return Response(status=NOT_FOUND)
+        else:
+            queryset = Collection.objects.filter(owner=response)
+
         queryset = self.filter_queryset(queryset)
         # print(queryset)
         serializer = CollectionSerializer(queryset, many=True)
@@ -37,7 +49,17 @@ class CollectionViewSet(viewsets.ModelViewSet):
         if not verification:
             return response
 
-        colln = Collection.objects.filter(name=pk, owner=response).first()
+        friend_name = request.data.get('friend')
+
+        if friend_name is not None:
+            user = User.objects.filter(username=response).first()
+            friend = User.objects.filter(username=friend_name).first()
+            if friend in user.friends.all():
+                colln = Collection.objects.filter(name=pk, owner=friend_name, private="false").first()
+            else:
+                return Response(status=NOT_FOUND)
+        else:
+            colln = Collection.objects.filter(name=pk, owner=response).first()
         
         if colln is None:
             return Response(status=NOT_FOUND)
@@ -66,7 +88,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         request_data_copy['owner'] = response
         request_data_copy['num_items'] = 0
         request_data_copy['size'] = 0
-        request_data_copy['private'] = True
+        request_data_copy['private'] = "true"
         serializer = CollectionSerializer(data=request_data_copy)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -99,10 +121,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
             colln.name = new_name
 
         if new_private is not None:
-            if new_private == "true":
-                colln.private = True
-            elif new_private == "false":
-                colln.private = False
+            colln.private = new_private
 
         colln.save()
 
