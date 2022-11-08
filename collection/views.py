@@ -66,6 +66,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         request_data_copy['owner'] = response
         request_data_copy['num_items'] = 0
         request_data_copy['size'] = 0
+        request_data_copy['private'] = True
         serializer = CollectionSerializer(data=request_data_copy)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -89,11 +90,22 @@ class CollectionViewSet(viewsets.ModelViewSet):
 
         colln = Collection.objects.filter(name=pk, owner=response).first()
 
+        new_private = request.data.get('private')
         new_name = request.data.get('name')
         if colln is None:
             return Response(status=NOT_FOUND)
-        colln.name = new_name
+
+        if new_name is not None:
+            colln.name = new_name
+
+        if new_private is not None:
+            if new_private == "true":
+                colln.private = True
+            elif new_private == "false":
+                colln.private = False
+
         colln.save()
+
         return Response(status=OK_STAT_CODE)
 
 def verify_user(request):
