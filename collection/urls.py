@@ -7,3 +7,4 @@ router = SimpleRouter()
 router.register('', CollectionViewSet, basename=COLLECTION_URL)
 
 urlpatterns = router.urls
+
