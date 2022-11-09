@@ -101,7 +101,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         colln = Collection.objects.filter(name=pk, owner=response).first()
         
         if colln is None:
-            return Response(status=NOT_FOUND)
+            return Response(status=NOT_FOUND,data={'message': 'Collection does not exist'})
         colln.delete()
         return Response(status=OK_STAT_CODE)
 
