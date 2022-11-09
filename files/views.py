@@ -48,8 +48,11 @@ class FileViewset(viewsets.ModelViewSet):
         user = User.objects.filter(username=username).first()
         if user is None:
             return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
-        
-        file = File.objects.filter(title=pk, owner=user.username).first()
+        colln = Collection.objects.filter(name=request.data.get('collnName', None)).first()
+        if colln is None:
+            return Response(status=INVALID_DATA_CODE, data={'message': 'Collection does not exist'})
+        colln_id = colln.id
+        file = File.objects.filter(title=pk, owner=user.username, colln=colln_id).first()
         # print("file", file)
         if file is None:
             return Response(status=NOT_FOUND)
@@ -108,8 +111,11 @@ class FileViewset(viewsets.ModelViewSet):
         user = User.objects.filter(username=username).first()
         if user is None:
             return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
-        
-        file = File.objects.filter(title=pk, owner=user.username).first()
+        colln = Collection.objects.filter(name=request.data.get('collnName', None)).first()
+        if colln is None:
+            return Response(status=INVALID_DATA_CODE, data={'message': 'Collection does not exist'})
+        colln_id = colln.id
+        file = File.objects.filter(title=pk, owner=user.username, colln=colln_id).first()
 
         if file is None:
             return Response(status=INVALID_DATA_CODE)
@@ -127,8 +133,11 @@ class FileViewset(viewsets.ModelViewSet):
         user = User.objects.filter(username=username).first()
         if user is None:
             return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
-        
-        file = File.objects.filter(title=pk, owner=user.username).first()
+        colln = Collection.objects.filter(name=request.data.get('collnName', None)).first()
+        if colln is None:
+            return Response(status=INVALID_DATA_CODE, data={'message': 'Collection does not exist'})
+        colln_id = colln.id
+        file = File.objects.filter(title=pk, owner=user.username, colln=colln_id).first()
 
         new_title = request.data.get('title')
         if file is None:
