@@ -102,7 +102,7 @@ class FileViewset(viewsets.ModelViewSet):
         if user is None:
             return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
         
-        file = File.objects.filter(id=pk, owner=user.username).first()
+        file = File.objects.filter(title=pk, owner=user.username).first()
 
         if file is None:
             return Response(status=INVALID_DATA_CODE)
