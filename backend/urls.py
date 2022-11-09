@@ -23,7 +23,8 @@ urlpatterns = [
     path('api/users/', include('users.urls')),
     path('api/files/', include('files.urls')),
     path('api/', include('rest_framework.urls')),
-    path('api/collection/', include('collection.urls'))
+    path('api/collection/', include('collection.urls')),
+    path('api/friends/', include('friends.urls'))
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
