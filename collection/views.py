@@ -18,25 +18,26 @@ class CollectionViewSet(viewsets.ModelViewSet):
     search_fields = ['name']
     
     def list(self, request):
+
         verification, response = verify_user(request)
         if not verification:
             return response
         
-        friend_name = request.data.get('friend')
+        # get collections owned by requesting user
+        queryset = Collection.objects.filter(owner=response)
 
-        if friend_name is not None:
-            user = User.objects.filter(username=response).first()
-            friend = User.objects.filter(username=friend_name).first()
-            if friend in user.friends.all():
-                queryset = Collection.objects.filter(owner=friend_name, private="false")
-            else:
-                return Response(status=NOT_FOUND)
-        else:
-            queryset = Collection.objects.filter(owner=response)
+        # if requesting user also wants all publicly available collections add to queryset
+        public = request.data.get('public')
+        if public is not None and public == "true":
+            queryset = queryset | Collection.objects.filter(private="false").exclude(owner=response)
+        
+        # no collections found
+        if queryset is None:
+            return Response(status=NOT_FOUND)
 
         queryset = self.filter_queryset(queryset)
-        # print(queryset)
         serializer = CollectionSerializer(queryset, many=True)
+
         return Response(serializer.data, status=OK_STAT_CODE)
     
     def filter_queryset(self, queryset):
@@ -45,29 +46,30 @@ class CollectionViewSet(viewsets.ModelViewSet):
         return queryset
 
     def retrieve(self, request, pk):
+
         verification, response = verify_user(request)
         if not verification:
             return response
 
-        friend_name = request.data.get('friend')
+        owner = request.data.get('owner')
 
-        if friend_name is not None:
-            user = User.objects.filter(username=response).first()
-            friend = User.objects.filter(username=friend_name).first()
-            if friend in user.friends.all():
-                colln = Collection.objects.filter(name=pk, owner=friend_name, private="false").first()
-            else:
-                return Response(status=NOT_FOUND)
+        # if requesting user wants public collection from different user
+        if owner is not None:
+            colln = Collection.objects.filter(name=pk, owner=owner, private="false").first()
+        # else search for collection in requesting user's collections
         else:
             colln = Collection.objects.filter(name=pk, owner=response).first()
         
+        # collection doesnt exist
         if colln is None:
             return Response(status=NOT_FOUND)
+
         serializer = CollectionSerializer(colln)
         files_data = File.objects.filter(id__in=serializer.data['allFiles'])
         serialized_file_data = FileSerializer(files_data, many=True)
         full_data = {'files_data': serialized_file_data.data}
         full_data.update(serializer.data)
+
         return Response(full_data, status=OK_STAT_CODE)
 
     def create(self, request):
@@ -78,9 +80,9 @@ class CollectionViewSet(viewsets.ModelViewSet):
             return response
         collnName = request.data.get('name')
 
-        # collection with that name already exists
         colln = Collection.objects.filter(name=collnName, owner_id=response)
 
+        # collection with that name already exists
         if colln:
             return Response(status=INVALID_DATA_CODE)
         
@@ -93,7 +95,9 @@ class CollectionViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=OK_STAT_CODE)
+    
     def destroy(self, request, pk):
+
         verification, response = verify_user(request)
         if not verification:
             return response
@@ -102,24 +106,37 @@ class CollectionViewSet(viewsets.ModelViewSet):
         
         if colln is None:
             return Response(status=NOT_FOUND,data={'message': 'Collection does not exist'})
+
         colln.delete()
+
         return Response(status=OK_STAT_CODE)
 
     def update(self, request, pk, **kwargs):
+
         verification, response = verify_user(request)
         if not verification:
             return response
 
         colln = Collection.objects.filter(name=pk, owner=response).first()
 
-        new_private = request.data.get('private')
-        new_name = request.data.get('name')
+        # collection does not exist
         if colln is None:
             return Response(status=NOT_FOUND)
 
+        new_private = request.data.get('private')
+        new_name = request.data.get('name')
+
+        # name to be updated
         if new_name is not None:
+
+            # collection with new name already exists
+            colln = Collection.objects.filter(name=new_name, owner_id=response)
+            if colln:
+                return Response(status=INVALID_DATA_CODE)
+            
             colln.name = new_name
 
+        # visibility to be updated
         if new_private is not None:
             colln.private = new_private
 
