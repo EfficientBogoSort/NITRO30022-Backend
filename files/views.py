@@ -80,7 +80,7 @@ class FileViewset(viewsets.ModelViewSet):
         if isinstance(request.data, QueryDict):
             request.data._mutable = True
         request.data['owner'] = user.username
-        
+        request.data['colln'] = Collection.objects.filter(name=request.data['colln']).first().id
         serializer = FileSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             colln.num_items += 1
