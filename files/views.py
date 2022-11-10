@@ -12,7 +12,7 @@ from rest_framework import filters
 class FileViewset(viewsets.ModelViewSet):
     lookup_value_regex = '[\w.]+' 
     serializer_class = FileSerializer
-    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.JSONParser]
     http_method_names = ['get', 'post', 'patch', 'delete']
     filter_backends = [filters.SearchFilter]
     search_fields = ['title']

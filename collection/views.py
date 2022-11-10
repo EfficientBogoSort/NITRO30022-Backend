@@ -1,7 +1,7 @@
 import json
 
 from collection.models import Collection
-from rest_framework import viewsets
+from rest_framework import viewsets, parsers
 from collection.serializers import CollectionSerializer
 from rest_framework.response import Response
 from users.models import User
@@ -12,10 +12,12 @@ from files.models import File
 from files.serializers import FileSerializer
 from rest_framework import filters
 
+
 class CollectionViewSet(viewsets.ModelViewSet):
 
     serializer_class = CollectionSerializer
     filter_backends = [filters.SearchFilter]
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.JSONParser]
     search_fields = ['name']
 
     def list(self, request):
