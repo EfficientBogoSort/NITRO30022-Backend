@@ -172,7 +172,13 @@ class CollectionViewSet(viewsets.ModelViewSet):
 
         colln.save()
 
-        return Response(status=OK_STAT_CODE)
+        serializer = CollectionSerializer(colln)
+        files_data = File.objects.filter(id__in=serializer.data['allFiles'])
+        serialized_file_data = FileSerializer(files_data, many=True)
+        full_data = {'files_data': serialized_file_data.data}
+        full_data.update(serializer.data)
+
+        return Response(full_data, status=OK_STAT_CODE)
 
     @action(detail=False, name='Search')
     def search(self, request):
