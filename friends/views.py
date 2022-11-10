@@ -6,8 +6,9 @@ from users.__init__ import *
 from friends.serializers import FriendSerializer
 
 
-# Create your views here.
-
+"""
+Unfinished feature: It is not being currently used as it is not finished
+"""
 class FriendViewSet(viewsets.ModelViewSet):
 
     def create(self, request):

@@ -3,6 +3,9 @@ from users.models import User
 from files.models import File
 import uuid
 class Collection(models.Model):
+    """
+    Class used to represent a Collection
+    """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     name = models.CharField(max_length=30)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)

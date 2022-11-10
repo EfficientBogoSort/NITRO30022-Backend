@@ -2,6 +2,9 @@ from django.db import models
 from users.models import User
 import uuid
 class File(models.Model):
+    """
+    Class used to represent a file
+    """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     title = models.CharField(max_length=30)
     colln = models.ForeignKey('collection.Collection', on_delete=models.CASCADE)

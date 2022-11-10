@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
     """
     class Meta:
         """
-        Contains meta data about the serializer
+        Contains metadata about the serializer
         """
         model = User
         fields = ['email', 'username', 'password']
