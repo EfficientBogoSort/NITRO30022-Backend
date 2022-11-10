@@ -12,18 +12,24 @@ from files.models import File
 from files.serializers import FileSerializer
 from rest_framework import filters
 
-class CollectionViewSet(viewsets.ModelViewSet):
 
+class CollectionViewSet(viewsets.ModelViewSet):
     serializer_class = CollectionSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
 
     def list(self, request):
-
+        """
+        Parameters:
+            request: HttpRequest - Contains the request information such as visibility of the collection
+        Returns:
+            response: Response - Returns a list of all the collections belonging to the user if successful and the
+                status code
+        """
         verification, response = verify_user(request)
         if not verification:
             return response
-        
+
         # get collections owned by requesting user
         queryset = Collection.objects.filter(owner=response)
 
@@ -31,7 +37,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         public = request.data.get('public')
         if public is not None and public == "true":
             queryset = queryset | Collection.objects.filter(private="false").exclude(owner=response)
-        
+
         # no collections found
         if queryset is None:
             return Response(status=NOT_FOUND)
@@ -40,14 +46,21 @@ class CollectionViewSet(viewsets.ModelViewSet):
         serializer = CollectionSerializer(queryset, many=True)
 
         return Response(serializer.data, status=OK_STAT_CODE)
-    
+
     def filter_queryset(self, queryset):
         for backend in list(self.filter_backends):
             queryset = backend().filter_queryset(self.request, queryset, self)
         return queryset
 
     def retrieve(self, request, pk):
-
+        """
+        Parameters:
+          request: HttpRequest - Contains the request information such as the collection name, the owner of the
+            collection
+        Returns:
+          response: Response - Returns the serialized data of the requested collection if successful  and
+          the status code
+        """
         verification, response = verify_user(request)
         if not verification:
             return response
@@ -60,7 +73,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         # else search for collection in requesting user's collections
         else:
             colln = Collection.objects.filter(name=pk, owner=response).first()
-        
+
         # collection doesnt exist
         if colln is None:
             return Response(status=NOT_FOUND)
@@ -74,19 +87,26 @@ class CollectionViewSet(viewsets.ModelViewSet):
         return Response(full_data, status=OK_STAT_CODE)
 
     def create(self, request):
+        """
+        Parameters:
+          request: HttpRequest - Contains the request information such as the collection name
+        Returns:
+          response: Response - Returns the serialized collection data if successful and the status code
+        """
+
         # response is either an error status code if something is wrong
         # or the user's username
         verification, response = verify_user(request)
         if not verification:
             return response
-        collnName = request.data.get('name')
+        colln_name = request.data.get('name')
 
-        colln = Collection.objects.filter(name=collnName, owner_id=response)
+        colln = Collection.objects.filter(name=colln_name, owner_id=response)
 
         # collection with that name already exists
         if colln:
             return Response(status=INVALID_DATA_CODE)
-        
+
         request_data_copy = request.data.copy()
         request_data_copy['owner'] = response
         request_data_copy['num_items'] = 0
@@ -96,24 +116,35 @@ class CollectionViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=OK_STAT_CODE)
-    
-    def destroy(self, request, pk):
 
+    def destroy(self, request, pk):
+        """
+        Parameters:
+          request: HttpRequest - Not used except for verification purposes as the name is contained in the url
+        Returns:
+          response: Response - Returns the status code
+        """
         verification, response = verify_user(request)
         if not verification:
             return response
 
         colln = Collection.objects.filter(name=pk, owner=response).first()
-        
+
         if colln is None:
-            return Response(status=NOT_FOUND,data={'message': 'Collection does not exist'})
+            return Response(status=NOT_FOUND, data={'message': 'Collection does not exist'})
 
         colln.delete()
 
         return Response(status=OK_STAT_CODE)
 
     def update(self, request, pk, **kwargs):
-
+        """
+        Parameters:
+          request: HttpRequest - Contains the request information such as the collection name and the
+            visibility (if changed)
+        Returns:
+          response: Response - Returns the status code
+        """
         verification, response = verify_user(request)
         if not verification:
             return response
@@ -131,10 +162,10 @@ class CollectionViewSet(viewsets.ModelViewSet):
         if new_name is not None and new_name != "" and new_name != colln.name:
 
             # collection with new name already exists
-            dupColln = Collection.objects.filter(name=new_name, owner_id=response).first()
-            if dupColln:
+            dup_colln = Collection.objects.filter(name=new_name, owner_id=response).first()
+            if dup_colln:
                 return Response(status=INVALID_DATA_CODE)
-            
+
             colln.name = new_name
 
         # visibility to be updated
@@ -145,7 +176,18 @@ class CollectionViewSet(viewsets.ModelViewSet):
 
         return Response(status=OK_STAT_CODE)
 
+
 def verify_user(request):
+    """
+    Parameters:
+        request: HttpRequest - Contains the header containing the JWT token for authentication purposes
+    Returns:
+        if successful:
+            (verified, username): (Boolean, String) - Returns a 2 tuple where the second field is the username
+        else:
+            (verified, response): (Boolean, Response) - Returns a 2 tuple where the second field is a Response object
+                that contains the appropriate status code
+    """
     token = decode_token(get_token(request))
     if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
         return False, Response(status=token)
@@ -155,7 +197,14 @@ def verify_user(request):
         return False, Response(status=NOT_FOUND, data={'message': 'User does not exist'})
     return True, username
 
+
 def get_token(request):
+    """
+    Parameters:
+        request: HttpRequest - Contains the header with the JWT token
+    Returns:
+        token: String - returns the token in a string form otherwise None if it's absent
+    """
     if request.META.get('HTTP_AUTHORIZATION'):
         token = request.META.get('HTTP_AUTHORIZATION').split(' ')[1]
         return token
@@ -163,6 +212,13 @@ def get_token(request):
 
 
 def decode_token(token):
+    """
+    Parameters:
+        token: string - JWT token as a string for authentication
+    Returns:
+        if successful:
+            d_token: Dictionary - The decoded token with information such as the username and expiration time
+    """
     if token is None:
         return BAD_REQ_CODE
     try:

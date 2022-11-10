@@ -91,6 +91,12 @@ def get_user(request):
 
 @api_view(['PUT'])
 def update_user_info(request):
+    """
+    Parameters:
+        request: HttpRequest - contains the token used to retrieve the user from the database
+     Return:
+        Response: contains data in response to the request as well as the request data
+    """
     verification, response = verify_user(request)
     if not verification:
         return response
@@ -103,6 +109,7 @@ def update_user_info(request):
     new_email = request.data.get('email', None)
     new_password = request.data.get('password', None)
 
+    # update the requested fields
     if new_email is not None:
         user.email = new_email
     
