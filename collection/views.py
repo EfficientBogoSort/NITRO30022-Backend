@@ -128,7 +128,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         new_name = request.data.get('name')
 
         # name to be updated
-        if new_name is not None:
+        if new_name is not None and new_name is not "" and new_name is not pk:
 
             # collection with new name already exists
             dupColln = Collection.objects.filter(name=new_name, owner_id=response).first()
