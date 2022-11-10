@@ -39,11 +39,6 @@ class FileViewset(viewsets.ModelViewSet):
         
         # get files owned by requesting user
         queryset = File.objects.filter(owner=user.username)
-
-        # if public is true, also get public files
-        public = request.data.get('public')
-        if public is not None and public == "true":
-            queryset = queryset | File.objects.filter(colln__private="false").exclude(owner=user.username)
         
         # nothing found
         if queryset is None:

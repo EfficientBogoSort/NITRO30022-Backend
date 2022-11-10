@@ -2,6 +2,7 @@ import json
 
 from collection.models import Collection
 from rest_framework import viewsets, parsers
+from rest_framework.decorators import action
 from collection.serializers import CollectionSerializer
 from rest_framework.response import Response
 from users.models import User
@@ -34,11 +35,6 @@ class CollectionViewSet(viewsets.ModelViewSet):
 
         # get collections owned by requesting user
         queryset = Collection.objects.filter(owner=response)
-
-        # if requesting user also wants all publicly available collections add to queryset
-        public = request.data.get('public')
-        if public is not None and public == "true":
-            queryset = queryset | Collection.objects.filter(private="false").exclude(owner=response)
 
         # no collections found
         if queryset is None:
@@ -177,6 +173,33 @@ class CollectionViewSet(viewsets.ModelViewSet):
         colln.save()
 
         return Response(status=OK_STAT_CODE)
+
+    @action(detail=False, name='Search')
+    def search(self, request):
+        """
+        Parameters:
+          request: HttpRequest - Contains the request information in the headers (no payload)
+        Returns:
+          response: Response - Returns the serialized collections data if successful and the status code
+        """
+
+        verification, response = verify_user(request)
+        if not verification:
+            return response
+
+        # get collections owned by requesting user and all public collections
+        queryset = Collection.objects.filter(owner=response) | Collection.objects.filter(private="false").exclude(owner=response)
+
+        # no collections found
+        if queryset is None:
+            return Response(status=NOT_FOUND)
+
+        queryset = self.filter_queryset(queryset)
+        serializer = CollectionSerializer(queryset, many=True)
+
+        return Response(serializer.data, status=OK_STAT_CODE)
+        
+        
 
 
 def verify_user(request):
