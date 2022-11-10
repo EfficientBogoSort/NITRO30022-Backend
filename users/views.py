@@ -18,9 +18,10 @@ class RegisterView(APIView):
     def post(self, request):
         """
         Parameters:
-            request: HttpRequest - contains signup data such as name, last name, username, password and email to create
+            request: HttpRequest - contains signup data including username, email & password to create
             a new user in the database
-        Return: returns a fresh JWT token for the user as well as the status code
+        Return: 
+            returns a fresh JWT token for the user as well as the status code
         """
         username = request.data.get('username', None)
         user = User.objects.filter(username=username).first()

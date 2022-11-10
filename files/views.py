@@ -54,7 +54,7 @@ class FileViewset(viewsets.ModelViewSet):
             queryset = backend().filter_queryset(self.request, queryset, self)
         return queryset
 
-    # not being used
+    # NOT IN USE
     def retrieve(self, request, pk):
         """
         Parameters:
