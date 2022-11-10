@@ -22,12 +22,20 @@ class FileViewset(viewsets.ModelViewSet):
         
         if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
             return Response(status=token, data={'message': 'Invalid token'})
-        username = token['username']
-        user = User.objects.filter(username=username).first()
+
+        user = User.objects.filter(username=token['username']).first()
         if user is None:
             return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
         
-        queryset = File.objects.filter(owner=user)
+        queryset = File.objects.filter(owner=user.username)
+
+        public = request.data.get('public')
+        if public is not None and public == "true":
+            queryset = queryset | File.objects.filter(colln__private="false").exclude(owner=user.username)
+        
+        if queryset is None:
+            return Response(NOT_FOUND)
+
         queryset = self.filter_queryset(queryset)
         # print(queryset)
         serializer = FileSerializer(queryset, many=True)
@@ -38,23 +46,41 @@ class FileViewset(viewsets.ModelViewSet):
             queryset = backend().filter_queryset(self.request, queryset, self)
         return queryset
 
+    # not being used
     def retrieve(self, request, pk):
+
         # authenticates user
         token = decode_token(get_token(request))
         if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
             return Response(status=token)
         # print(token)
-        username = token['username']
-        user = User.objects.filter(username=username).first()
+
+        owner = request.data.get('owner')
+        if owner is None:
+            owner = token['username']
+
+        user = User.objects.filter(username=owner).first()
         if user is None:
             return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
-        colln = Collection.objects.filter(name=request.data.get('collnName', None)).first()
+
+        collnName = request.data.get('collnName', None)
+        colln = Collection.objects.filter(name=collnName, owner=owner)
+        if request.data.get('owner') is not None:
+            colln = colln.filter(private="false").first()
+        else:
+            colln = colln.first()
+        
+        print(colln)
+
         if colln is None:
             return Response(status=INVALID_DATA_CODE, data={'message': 'Collection does not exist'})
-        colln_id = colln.id
-        file = File.objects.filter(title=pk, owner=user.username, colln=colln_id).first()
+
+        print(pk)
+        file = File.objects.filter(title=pk, owner=user, colln=colln.id).first()
         # print("file", file)
+
         if file is None:
+            print("file not found")
             return Response(status=NOT_FOUND)
         
         serializer = FileSerializer(file)
@@ -102,6 +128,7 @@ class FileViewset(viewsets.ModelViewSet):
         return Response(status=INVALID_DATA_CODE, data={'message': 'Invalid data'})
     
     def destroy(self, request, pk):
+
         # authenticates user
         token = decode_token(get_token(request))
         if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
@@ -111,9 +138,11 @@ class FileViewset(viewsets.ModelViewSet):
         user = User.objects.filter(username=username).first()
         if user is None:
             return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
+
         colln = Collection.objects.filter(name=request.data.get('collnName', None)).first()
         if colln is None:
             return Response(status=INVALID_DATA_CODE, data={'message': 'Collection does not exist'})
+
         colln_id = colln.id
         file = File.objects.filter(title=pk, owner=user.username, colln=colln_id).first()
 

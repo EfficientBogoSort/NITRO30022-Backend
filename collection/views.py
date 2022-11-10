@@ -13,10 +13,11 @@ from files.serializers import FileSerializer
 from rest_framework import filters
 
 class CollectionViewSet(viewsets.ModelViewSet):
+
     serializer_class = CollectionSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
-    
+
     def list(self, request):
 
         verification, response = verify_user(request)
@@ -130,8 +131,8 @@ class CollectionViewSet(viewsets.ModelViewSet):
         if new_name is not None:
 
             # collection with new name already exists
-            colln = Collection.objects.filter(name=new_name, owner_id=response)
-            if colln:
+            dupColln = Collection.objects.filter(name=new_name, owner_id=response).first()
+            if dupColln:
                 return Response(status=INVALID_DATA_CODE)
             
             colln.name = new_name
