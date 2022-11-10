@@ -168,7 +168,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
 
         # visibility to be updated
         if new_private is not None:
-            colln.private = new_private
+            colln.private = "true" if (new_private == True or new_private == "true") else "false"
 
         colln.save()
 
