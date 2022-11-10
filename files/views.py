@@ -169,6 +169,10 @@ class FileViewset(viewsets.ModelViewSet):
 
         if file is None:
             return Response(status=INVALID_DATA_CODE)
+
+        colln.num_items -= 1
+        colln.save()
         
         file.delete()
+        
         return Response(status=OK_STAT_CODE)
