@@ -75,18 +75,14 @@ class FileViewset(viewsets.ModelViewSet):
             colln = colln.filter(private="false").first()
         else:
             colln = colln.first()
-        
-        print(colln)
 
         if colln is None:
             return Response(status=INVALID_DATA_CODE, data={'message': 'Collection does not exist'})
 
-        print(pk)
         file = File.objects.filter(title=pk, owner=user, colln=colln.id).first()
         # print("file", file)
 
         if file is None:
-            print("file not found")
             return Response(status=NOT_FOUND)
         
         serializer = FileSerializer(file)
@@ -123,6 +119,7 @@ class FileViewset(viewsets.ModelViewSet):
             request.data._mutable = True
         request.data['owner'] = user.username
         request.data['colln'] = Collection.objects.filter(name=request.data['colln']).first().id
+        request.data['title'] = request.data['title'].replace(".", "`")
         serializer = FileSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             colln.num_items += 1
