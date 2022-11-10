@@ -168,7 +168,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
 
         return Response(status=OK_STAT_CODE)
 
-    @action(detail=False, name='Search')
+    @action(detail=False, name='search')
     def search(self, request):
         """
         Parameters:
@@ -192,9 +192,37 @@ class CollectionViewSet(viewsets.ModelViewSet):
         serializer = CollectionSerializer(queryset, many=True)
 
         return Response(serializer.data, status=OK_STAT_CODE)
-        
-        
 
+    @action(detail=True, methods=['post'], name='public')
+    def public(self, request, pk=None):
+        """
+        Parameters:
+          request: HttpRequest - Contains the request information in the headers (no payload)
+        Returns:
+          response: Response - Returns the serialized collection data if successful and the status code
+        """
+
+        verification, response = verify_user(request)
+        if not verification:
+            return response
+
+        owner = request.data.get('owner')
+
+        # search for collection owned by requesting user
+        colln = Collection.objects.filter(name=pk, owner=owner).first()
+
+        # collection doesnt exist
+        if colln is None:
+            return Response(status=NOT_FOUND)
+
+        serializer = CollectionSerializer(colln)
+        files_data = File.objects.filter(id__in=serializer.data['allFiles'])
+        serialized_file_data = FileSerializer(files_data, many=True)
+        full_data = {'files_data': serialized_file_data.data}
+        full_data.update(serializer.data)
+
+        return Response(full_data, status=OK_STAT_CODE) 
+        
 
 def verify_user(request):
     """
