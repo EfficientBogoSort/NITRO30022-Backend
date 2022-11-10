@@ -10,6 +10,7 @@ from .__init__ import *
 from rest_framework import filters
 
 class FileViewset(viewsets.ModelViewSet):
+    lookup_value_regex = '[\w.]+' 
     serializer_class = FileSerializer
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
     http_method_names = ['get', 'post', 'patch', 'delete']
@@ -119,7 +120,6 @@ class FileViewset(viewsets.ModelViewSet):
             request.data._mutable = True
         request.data['owner'] = user.username
         request.data['colln'] = Collection.objects.filter(name=request.data['colln']).first().id
-        request.data['title'] = request.data['title'].replace(".", "`")
         serializer = FileSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             colln.num_items += 1
