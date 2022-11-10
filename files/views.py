@@ -17,27 +17,33 @@ class FileViewset(viewsets.ModelViewSet):
     search_fields = ['title']
 
     def list(self, request):
+
         # authenticates user
         token = decode_token(get_token(request))
         
         if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
             return Response(status=token, data={'message': 'Invalid token'})
 
-        user = User.objects.filter(username=token['username']).first()
+        username = token['username']
+
+        user = User.objects.filter(username=username).first()
         if user is None:
             return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
         
+        # get files owned by requesting user
         queryset = File.objects.filter(owner=user.username)
 
+        # if public is true, also get public files
         public = request.data.get('public')
         if public is not None and public == "true":
             queryset = queryset | File.objects.filter(colln__private="false").exclude(owner=user.username)
         
+        # nothing found
         if queryset is None:
             return Response(NOT_FOUND)
 
         queryset = self.filter_queryset(queryset)
-        # print(queryset)
+
         serializer = FileSerializer(queryset, many=True)
         return Response(serializer.data, status=OK_STAT_CODE)
     
@@ -152,24 +158,29 @@ class FileViewset(viewsets.ModelViewSet):
         file.delete()
         return Response(status=OK_STAT_CODE)
 
+    # no longer being used
     def update(self, request, pk):
+
         # authenticates user
         token = decode_token(get_token(request))
         if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
             return Response(status=token)
-        # print(token)
+
         username = token['username']
         user = User.objects.filter(username=username).first()
         if user is None:
             return Response(status=INVALID_DATA_CODE, data={'message': 'User does not exist'})
+
         colln = Collection.objects.filter(name=request.data.get('collnName', None)).first()
         if colln is None:
             return Response(status=INVALID_DATA_CODE, data={'message': 'Collection does not exist'})
+
         colln_id = colln.id
         file = File.objects.filter(title=pk, owner=user.username, colln=colln_id).first()
-
-        new_title = request.data.get('title')
         if file is None:
             return Response(status=INVALID_DATA_CODE)
+
+        new_title = request.data.get('title')
+
         file.update(name=new_title)
         return Response(status=OK_STAT_CODE)
