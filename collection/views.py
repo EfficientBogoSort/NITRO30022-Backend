@@ -154,7 +154,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
         if new_name is not None and new_name != "" and new_name != colln.name:
 
             # collection with new name already exists
-            dup_colln = Collection.objects.filter(name=new_name, owner_id=response).first()
+            dup_colln = Collection.objects.filter(name=new_name, owner=response).first()
             if dup_colln:
                 return Response(status=INVALID_DATA_CODE)
 
