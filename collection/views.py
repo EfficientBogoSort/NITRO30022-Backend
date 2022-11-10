@@ -14,7 +14,7 @@ from rest_framework import filters
 
 
 class CollectionViewSet(viewsets.ModelViewSet):
-    git 
+ 
     serializer_class = CollectionSerializer
     filter_backends = [filters.SearchFilter]
     parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.JSONParser]
