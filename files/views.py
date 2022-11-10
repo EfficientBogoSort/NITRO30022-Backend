@@ -69,10 +69,7 @@ class FileViewset(viewsets.ModelViewSet):
         if token == INVALID_DATA_CODE or token == BAD_REQ_CODE:
             return Response(status=token)
 
-
-        owner = request.data.get('owner')
-        if owner is None:
-            owner = token['username']
+        owner = token['username']
         # check that the user that owns the file exists
         user = User.objects.filter(username=owner).first()
         if user is None:

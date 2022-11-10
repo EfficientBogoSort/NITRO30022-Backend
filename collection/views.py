@@ -63,14 +63,8 @@ class CollectionViewSet(viewsets.ModelViewSet):
         if not verification:
             return response
 
-        owner = request.data.get('owner')
-
-        # if requesting user wants public collection from different user
-        if owner is not None:
-            colln = Collection.objects.filter(name=pk, owner=owner, private="false").first()
-        # else search for collection in requesting user's collections
-        else:
-            colln = Collection.objects.filter(name=pk, owner=response).first()
+        # search for collection owned by requesting user
+        colln = Collection.objects.filter(name=pk, owner=response).first()
 
         # collection doesnt exist
         if colln is None:
@@ -172,13 +166,7 @@ class CollectionViewSet(viewsets.ModelViewSet):
 
         colln.save()
 
-        serializer = CollectionSerializer(colln)
-        files_data = File.objects.filter(id__in=serializer.data['allFiles'])
-        serialized_file_data = FileSerializer(files_data, many=True)
-        full_data = {'files_data': serialized_file_data.data}
-        full_data.update(serializer.data)
-
-        return Response(full_data, status=OK_STAT_CODE)
+        return Response(status=OK_STAT_CODE)
 
     @action(detail=False, name='Search')
     def search(self, request):
